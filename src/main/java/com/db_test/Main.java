@@ -1,8 +1,8 @@
 package com.db_test;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.*;
+import java.util.ArrayList;
 
 
 public class Main {
@@ -26,9 +26,28 @@ public class Main {
         return con;
     }
 
+    private ArrayList<Office> report1(Connection con){
+        ArrayList<Office> al = new ArrayList<>();
+        try{
+            PreparedStatement ps = con.prepareStatement("SELECT officecode, state, city FROM offices");
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Office of = new Office(rs.getInt(1), rs.getString(2), rs.getString(3));
+                al.add(of);
+            }
+            rs.close();
+            ps.close();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        return al;
+    }
+
     public static void main(String[] args) {
         Main m = new Main();
         Connection con = m.get_Db_connection();
+        ArrayList<Office> al = m.report1(con);
+        System.out.println(al);
 
         try{
             if(con != null){
